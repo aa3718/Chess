@@ -46,8 +46,6 @@ void ChessBoard::resetBoard() {
   Board[row][file] = &queen_white;
   file++;
   Board[row][file] = &king_white;
-  king_pos_w[0] = file;
-  king_pos_w[1] = row;
   file++;
   Board[row][file] = &bishop_white[1];
   file++;
@@ -81,8 +79,6 @@ void ChessBoard::resetBoard() {
   Board[row][file] = &queen_black;
   file++;
   Board[row][file] = &king_black;
-  king_pos_b[0] = file;
-  king_pos_b[1] = row;
   file++;
   Board[row][file] = &bishop_black[1];
   file++;
@@ -121,7 +117,7 @@ void ChessBoard::submitMove(const char source_s[], const char destination_s[]) {
 
 
 int ChessBoard::findPiece() {
-
+  
   // Checking if it the right colors turn
   if ((Board[source[1]][source[0]]) &&
       (counter % 2 == 0) &&
@@ -160,6 +156,7 @@ int ChessBoard::findPiece() {
       auto hold = Board[destination[1]][destination[0]];
       Board[destination[1]][destination[0]] = Board[source[1]][source[0]];
       Board[source[1]][source[0]] = nullptr;
+    
 
       if (inCheck(king_pos_w, Black) == true) {
 
@@ -168,7 +165,7 @@ int ChessBoard::findPiece() {
 
 	// Checking it did not put own piece in check resulting in an illegal move
 	if (counter % 2 == 0) {
-
+	  
 	  // Reverse move on board
 	  Board[source[1]][source[0]] = Board[destination[1]][destination[0]];
 	  Board[destination[1]][destination[0]] = hold;
@@ -187,7 +184,12 @@ int ChessBoard::findPiece() {
 	
       };
 
-      // check if in stalemmate for this color here and your turn
+      // Check if in stalemate
+      if ((checkMate(king_pos_w, Black) == true)) {
+
+	  cout << "Stalemate\n";
+	  return 0;
+	};
       
       
       if (inCheck(king_pos_b, White) == true) {
@@ -217,6 +219,12 @@ int ChessBoard::findPiece() {
       };
 
       // check if in stalemate for this color here and  your turn
+      if (checkMate(king_pos_b, White) == true) {
+
+	  cout << "Stalemate\n";
+	  return 0;
+	};
+      
       
       counter++;
 
@@ -249,6 +257,7 @@ bool ChessBoard::inCheck(int king_pos[], Color color) {
       if (Board[row][file] &&
 	  Board[row][file]->type() == KING &&
 	  Board[row][file]->see_col() != color) {
+	
 	king_pos[0] = file;
 	king_pos[1] = row;
 	
@@ -284,7 +293,7 @@ bool ChessBoard::checkMate(int king_pos[], Color color) {
   // Piece pointer holding vaue for reverse
   Piece* holding;
   
-  // Goes through entire board
+  // Goes through entire board and looks for own color pieces
   for (int row = 0 ; row < 8 ; row++) {
     for (int file = 0 ; file < 8 ; file++) {
 
@@ -322,7 +331,7 @@ bool ChessBoard::checkMate(int king_pos[], Color color) {
 		  // If inCheck is false then CM is not happening so delete change keep going
 		  Board[row][file] = Board[possible_row][possible_file];
                   Board[possible_row][possible_file]= holding;
-		  
+
 		  return false;
 
 		} else {
@@ -347,26 +356,6 @@ bool ChessBoard::checkMate(int king_pos[], Color color) {
 };
 
 
-bool ChessBoard::stalemate() {
-
-  // if it is your turn
-  // and you and not in check
-
-  // check all pieces of your color for any move for which own incheck is false
-
-  // if find a move then false keep going
-  
-  // if nothing return true
- 
-  return false;
-
-
-
-
-
-
-
-};
 
   
  

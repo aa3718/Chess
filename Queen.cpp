@@ -19,12 +19,10 @@ int Queen::type() {
 
 bool Queen::validatePiece(const int source[], const int destination[], Piece* Board[8][8], const int counter) {
 
-   
   int i, j;
   
   if ((abs(source[0] - destination[0])) == (abs(source[1] - destination[1]))) {
-
-
+    
     if ((source[1] < destination[1]) &&
 	(source[0] < destination[0])) {
       for ((i = (source[1] + 1)), (j = (source[0] + 1)) ; i < destination[1] && j < destination[0] ; i++, j++) {
@@ -68,15 +66,24 @@ bool Queen::validatePiece(const int source[], const int destination[], Piece* Bo
       };
 
     return true;
+
     
   };
 
   
   if ((source[0] == destination[0]) || (source[1] == destination[1])) {
+
+ if (source[0] == destination[0] && source[1] == destination[1]) {
+      return false;
+    };
+    
     if (source[0] == destination[0]) {
+
+      
       if (source[1] < destination[1]) {
 	for (int i = (source[1] + 1) ; i < destination[1] ; i++) {
-	  if (Board[i][source[0]]) {
+	  
+	  if (Board[i][source[0]] != nullptr) {
 
 	    return false;
 	  };
@@ -93,18 +100,21 @@ bool Queen::validatePiece(const int source[], const int destination[], Piece* Bo
       };
     };
 
+    
     if (source[1] == destination[1]) {
+    
+      
       if (source[0] < destination[0]) {
-	for (int i = (source[1] + 1) ; i < destination[1] ; i++) {
+	for (int i = (source[0] + 1) ; i < destination[0] ; i++) {
 	  if (Board[source[1]][i]) {
-	  
+	   
 	    return false;
 	  }
 	};
       };
 
       if (source[0] > destination[0]) {
-	for (int i = (source[1] - 1); i > destination[1] ; i--) {
+	for (int i = (source[0] - 1); i > destination[0] ; i--) {
 	  if (Board[source[1]][i]) {
 	    
 	    return false;
