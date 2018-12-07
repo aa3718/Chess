@@ -5,8 +5,9 @@ using namespace std;
 
 int main() {
   
-  ChessBoard cb;
 
+ChessBoard cb;
+  
  cb.submitMove("D2", "D4"); // good pawn two
   cout << endl;
 
@@ -94,7 +95,7 @@ int main() {
      cb.submitMove("E4", "E3"); // good knight
   cout << endl;
   
-  /*
+  
   
   cb.submitMove("E2", "E4"); // good pawn two
   cout << endl;
@@ -134,7 +135,6 @@ int main() {
   cout << endl;
   
   cb.submitMove("G5", "H4"); // move blak queen
-*/
   
   cb.resetBoard();
  

@@ -114,6 +114,7 @@ bool Queen::validatePiece(const int source[], const int destination[], Piece* Bo
       };
 
       if (source[0] > destination[0]) {
+
 	for (int i = (source[0] - 1); i > destination[0] ; i--) {
 	  if (Board[source[1]][i]) {
 	    

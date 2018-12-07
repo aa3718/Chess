@@ -64,7 +64,7 @@ void ChessBoard::resetBoard() {
   file = 0;
   
   for (; file < file_length; file++) {
-	Board[row][file] = &pawn_black[file];
+    Board[row][file] = &pawn_black[file];
   };
 
   row = 7;
@@ -89,14 +89,14 @@ void ChessBoard::resetBoard() {
 };
 
 void ChessBoard::submitMove(const char source_s[], const char destination_s[]) {
+
+  cout << source_s[0] << source_s[1] << " to " << destination_s[0] << destination_s[1] << " is the move given.\n";
   
   source[0] = source_s[0] - 'A';
   source[1] = source_s[1] - '1';  
 
   destination[0] = destination_s[0] - 'A';
   destination[1] = destination_s[1] - '1';
-
-  cout << source[0] << source[1] << destination[0] << destination[1] << endl;
   
   for (int i = 0 ; i < 2 ; i++) {
     if (source[i] < 0 || source[i] > 7) {
@@ -123,16 +123,20 @@ int ChessBoard::findPiece() {
       (counter % 2 == 0) &&
       (Board[source[1]][source[0]]->see_col() == Black)) {
 
-    cout << "Wrong color: Not your turn.\n";
+    cout << "Wrong color: Not blacks turn.\n";
+
     return 0;
+
   };
   
   if ((Board[source[1]][source[0]]) &&
       (counter % 2 == 1) &&
       (Board[source[1]][source[0]]->see_col() == White)) {
 
-    cout << "Wrong color: Not your turn.\n";
+    cout << "Wrong color: Not whites turn.\n";
+
     return 0;
+
   };
 
   // Checking if it is a valid move and that the source move is not empty
@@ -149,58 +153,63 @@ int ChessBoard::findPiece() {
 	
       };
 
-  if (Board[destination[1]][destination[0]]) {
-	cout << "Eaten pawn ! \n";
+      if (Board[destination[1]][destination[0]]) {
+	
+	cout << "Eaten piece at destination :";
+	printOutType(destination[1], destination[0]);
+	
       };
-      
+
+      // Make move on the board
       auto hold = Board[destination[1]][destination[0]];
       Board[destination[1]][destination[0]] = Board[source[1]][source[0]];
       Board[source[1]][source[0]] = nullptr;
-    
 
       if (inCheck(king_pos_w, Black) == true) {
 
 	cout << "White in check.\n";
-	white_in_check = true;
 
 	// Checking it did not put own piece in check resulting in an illegal move
 	if (counter % 2 == 0) {
 	  
-	  // Reverse move on board
+	  // Reversing move on board if results in illegal move
 	  Board[source[1]][source[0]] = Board[destination[1]][destination[0]];
 	  Board[destination[1]][destination[0]] = hold;
 
 	  cout << "This move leads to your own pawn in check, not allowed, please play again.\n";
+
 	  return 0;
 
 	};
 
 	if (checkMate(king_pos_w, Black) == true) {
+	  cout << "Nice move.\n";
+	  cout << "Checkmate.\n";
 
-	  cout << "Checkmate\n";
 	  return 0;
 	  
 	};
 	
       };
 
-      // Check if in stalemate
+      // Check if in stalemate if not in Check for Black
       if ((checkMate(king_pos_w, Black) == true)) {
 
-	  cout << "Stalemate\n";
-	  return 0;
-	};
+	cout << "Stalemate.\n";
+
+	return 0;
+
+      };
       
       
       if (inCheck(king_pos_b, White) == true) {
 
 	cout << "Black in check.\n";
-	black_in_check = true;
 
 	// Checking it did not put own piece in check resulting in an illegal move
 	if (counter % 2 == 1) {
 	  
-	  // Reverse the move on the board
+	  // Reversing the move on the board if results in illegal move
 	  Board[source[1]][source[0]] = Board[destination[1]][destination[0]];
 	  Board[destination[1]][destination[0]] = hold;
 	  
@@ -210,22 +219,38 @@ int ChessBoard::findPiece() {
 	};
 
 	if (checkMate(king_pos_b, White) == true) {
-
-	  cout << "Checkmate\n";
+	  cout << "Nice move.\n";
+	  cout << "Checkmate.\n";
 
 	  return 0;
 	};
 	
       };
 
-      // check if in stalemate for this color here and  your turn
+      // Check if in stalemate if not in Check for White 
       if (checkMate(king_pos_b, White) == true) {
 
-	  cout << "Stalemate\n";
-	  return 0;
-	};
+	cout << "Stalemate.\n";
+
+	return 0;
+
+      };
+
+      // If valid move print out color and type moved
       
+      cout << "Nice move: ";
+
+      if (counter % 2 == 0) {
+	cout << "White";
+      };
+
+      if (counter % 2 == 1) {
+	cout << "Black";
+      };
       
+      printOutType(destination[1], destination[0]);
+      cout << "moved.\n";
+  
       counter++;
 
       
@@ -242,17 +267,15 @@ int ChessBoard::findPiece() {
 
     return 0;
   };
-
-  cout << "Nice move. \n";
-
-    return 0;
+  
+  return 0;
 };
 
 bool ChessBoard::inCheck(int king_pos[], Color color) {
 
   // Finds the King
- for (int row = 0 ; row < 8 ; row++) {
-   for (int file = 0 ; file < 8 ; file++) {
+  for (int row = 0 ; row < 8 ; row++) {
+    for (int file = 0 ; file < 8 ; file++) {
 
       if (Board[row][file] &&
 	  Board[row][file]->type() == KING &&
@@ -265,7 +288,7 @@ bool ChessBoard::inCheck(int king_pos[], Color color) {
     };
   };
 
- // Any piece other color that could take king
+  // Any valid move from piece of the opposite color that could take king
   for (int i = 0 ; i < 8 ; i++) { 
     for (int j = 0 ; j < 8 ; j++) {
       
@@ -352,6 +375,62 @@ bool ChessBoard::checkMate(int king_pos[], Color color) {
   // If goes through entire possible moves and nothing gets it out of inCheck then it is CheckMate
   return true;
 
+  
+};
+
+
+int ChessBoard::printOutType(int row, int file) {
+
+  
+  if (Board[row][file]->type() == 1) {
+
+    cout << " Queen ";
+
+    return 0;
+  }; 
+
+
+  if (Board[row][file]->type() == 2) {
+
+    cout << " King ";
+    
+    return 0;
+
+  };
+
+  if (Board[row][file]->type() == 3) {
+
+    cout << " Bishop ";
+    
+    return 0;
+    
+  }; 
+
+  if (Board[row][file]->type() == 4) {
+
+    cout << " Castle ";
+    
+    return 0;
+
+  }; 
+
+  if (Board[row][file]->type() == 5) {
+
+    cout << " Pawn ";
+    
+    return 0;
+    
+  }; 
+
+  if (Board[row][file]->type() == 6) {
+
+    cout << " Knight ";
+    
+    return 0;
+
+  }; 
+
+  return 0;
   
 };
 

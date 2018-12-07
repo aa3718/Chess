@@ -43,8 +43,7 @@ class ChessBoard {
   bool inCheck(int king_pos[], Color color);
   bool checkMate(int king_pos[], Color color);
   bool stalemate();
-  bool white_in_check = false;
-  bool black_in_check = false;
+  int printOutType(int row, int file);
 };
 
 #endif
