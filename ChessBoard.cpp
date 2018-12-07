@@ -157,6 +157,7 @@ int ChessBoard::findPiece() {
 	
 	cout << "Eaten piece at destination :";
 	printOutType(destination[1], destination[0]);
+	cout << "\n";
 	
       };
 
